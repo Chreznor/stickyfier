@@ -71,7 +71,7 @@
 function generateEntries() {
     const list = document.querySelector('.list');
     for (let i = 0; i < 100; i++) {
-        const classes = ['red', 'wheat', 'crimson', 'green', 'coral', 'red', 'wheat', 'crimson', 'green', 'coral'];
+        const classes = ['red', 'wheat', 'crimson', 'green', 'coral', 'purple', 'dark-blue', 'red', 'wheat', 'crimson', 'green', 'coral', 'purple', 'dark-blue'];
         list.innerHTML +=
             ` <li class="list-container">
         <div class="headline-container ${classes[Math.floor(Math.random() * classes.length)]}">
@@ -93,8 +93,9 @@ const disableBtn = document.querySelector('#disable');
 const headlineContainers = document.querySelectorAll('.headline-container');
 const listContainers = document.querySelectorAll('.list-container');
 
-
+//importing the stickyfier module
 const stickyfier = __webpack_require__(1);
+//getting the object with the functions
 const methods = stickyfier(headlineContainers, listContainers);
 initializeBtn.addEventListener('click', methods.initialize);
 disableBtn.addEventListener('click', methods.disable);
@@ -105,58 +106,47 @@ disableBtn.addEventListener('click', methods.disable);
 /***/ (function(module, exports) {
 
 const stickyfier = (HeadlineContainers, listContainers) => {
+  //The headline container's parent element is also needed to correctly identify the distances between the texts
 
-    let arr = [];
+  //the private function that stickyfies the headlines
+  const fixedHeadline = () => {
 
-    const fixedHeadline = () => {
-        for (var i = 0; i < HeadlineContainers.length; i++) {
-            const headlineContainer = HeadlineContainers[i];
-            const headlineContainerTop = headlineContainer.getBoundingClientRect().top + window.scrollY;
-            const listEntry = listContainers[i];
+      //a for loop is used to keep track of every element in the DOM collection
+      for (var i = 0; i < HeadlineContainers.length; i++) {
+          const headlineContainer = HeadlineContainers[i];
+          const headlineContainerTop = headlineContainer.getBoundingClientRect().top + window.scrollY;
+          const listEntry = listContainers[i];
 
-            console.log(headlineContainerTop, headlineContainer.getBoundingClientRect().height, listEntry.getBoundingClientRect().top + window.scrollY, arr)
+          if (window.scrollY >= (listEntry.getBoundingClientRect().top + window.scrollY)) {
+              //it's really important to add headline container's height to the padding of its parent element
+              //in order to avoid the jumping of the text content once the fixed element leaves the regular DOM flow
+              listEntry.style.paddingTop = headlineContainer.getBoundingClientRect().height + 'px';
+              headlineContainer.classList.add('fixed-nav');
+          } else {
+              listEntry.style.paddingTop = 0;
+              headlineContainer.classList.remove('fixed-nav');
+          }
+      }
+  }
 
-            if (arr.includes(Math.floor(headlineContainerTop)) === false) {
-                if (arr.length < HeadlineContainers.length) {
-                    arr.push(Math.floor(headlineContainerTop));
-                }
-            }
-
-            // if ((arr[1] - arr[0]) - listEntry.getBoundingClientRect().height > 50) {
-            //   arr = [];
-            // }
-
-            if (window.scrollY >= (listEntry.getBoundingClientRect().top + window.scrollY)) {
-                listEntry.style.paddingTop = headlineContainer.getBoundingClientRect().height + 'px';
-                headlineContainer.classList.add('fixed-nav');
-            } else {
-                listEntry.style.paddingTop = 0;
-                headlineContainer.classList.remove('fixed-nav');
-            }
-
-            if (window.scrollY >= headlineContainerTop + headlineContainer.getBoundingClientRect().height) {
-                headlineContainer.classList.add("bottom");
-            } else {
-                headlineContainer.classList.remove("bottom");
-            }
-        }
-    }
-
-    return {
-        initialize() {
-            window.addEventListener('scroll', fixedHeadline);
-        },
-        disable() {
-            window.removeEventListener('scroll', fixedHeadline);
-            HeadlineContainers.forEach(element => {
-                element.classList.remove('fixed-nav');
-                element.classList.remove('bottom');
-            });
-            listContainers.forEach(listEntry => {
-                listEntry.style.paddingTop = 0;
-            })
-        }
-    }
+  //returning two functions that add or remove the event listener to the window scroll
+  return {
+      initialize() {
+          window.addEventListener('scroll', fixedHeadline);
+      },
+      disable() {
+          window.removeEventListener('scroll', fixedHeadline);
+          //once the event lisntener is removed, the attached classes have to go too
+          HeadlineContainers.forEach(element => {
+              element.classList.remove('fixed-nav');
+              element.classList.remove('bottom');
+          });
+          //restoring the listContainers' padding
+          listContainers.forEach(listEntry => {
+              listEntry.style.paddingTop = 0;
+          })
+      }
+  }
 
 }
 

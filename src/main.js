@@ -2,7 +2,7 @@
 function generateEntries() {
     const list = document.querySelector('.list');
     for (let i = 0; i < 100; i++) {
-        const classes = ['red', 'wheat', 'crimson', 'green', 'coral', 'red', 'wheat', 'crimson', 'green', 'coral'];
+        const classes = ['red', 'wheat', 'crimson', 'green', 'coral', 'purple', 'dark-blue', 'red', 'wheat', 'crimson', 'green', 'coral', 'purple', 'dark-blue'];
         list.innerHTML +=
             ` <li class="list-container">
         <div class="headline-container ${classes[Math.floor(Math.random() * classes.length)]}">
@@ -24,8 +24,9 @@ const disableBtn = document.querySelector('#disable');
 const headlineContainers = document.querySelectorAll('.headline-container');
 const listContainers = document.querySelectorAll('.list-container');
 
-
+//importing the stickyfier module
 const stickyfier = require('./stickyfier.js');
+//getting the object with the functions
 const methods = stickyfier(headlineContainers, listContainers);
 initializeBtn.addEventListener('click', methods.initialize);
 disableBtn.addEventListener('click', methods.disable);
