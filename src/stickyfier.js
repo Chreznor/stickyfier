@@ -23,7 +23,10 @@ const stickyfier = (HeadlineContainers, listContainers) => {
   }
 
   let handler;
+  //handles the case when initialize is pressed more than once, after which the event listener cannot be removed with disable
+  let preventFire = false;
 
+  //a quickly done scroll optimization
   function throttle(func, wait) {
     let time = Date.now();
     return function() {
@@ -37,8 +40,11 @@ const stickyfier = (HeadlineContainers, listContainers) => {
   //returning two functions that add or remove the event listener to the window scroll
   return {
       initialize() {
-          handler = throttle(fixedHeadline, 100);
-          window.addEventListener('scroll', handler);
+          if (preventFire === false) {
+            handler = throttle(fixedHeadline, 100);
+            window.addEventListener('scroll', handler);
+          }
+          preventFire = true;
       },
       disable() {
           window.removeEventListener('scroll', handler);
@@ -50,7 +56,8 @@ const stickyfier = (HeadlineContainers, listContainers) => {
           //restoring the listContainers' padding
           listContainers.forEach(listEntry => {
               listEntry.style.paddingTop = 0;
-          })
+          });
+          preventFire = false;
       }
   }
 

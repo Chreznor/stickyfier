@@ -130,6 +130,7 @@ const stickyfier = (HeadlineContainers, listContainers) => {
   }
 
   let handler;
+  let preventFire = false;
 
   function throttle(func, wait) {
     let time = Date.now();
@@ -144,8 +145,11 @@ const stickyfier = (HeadlineContainers, listContainers) => {
   //returning two functions that add or remove the event listener to the window scroll
   return {
       initialize() {
-          handler = throttle(fixedHeadline, 100);
-          window.addEventListener('scroll', handler);
+          if (preventFire === false) {
+            handler = throttle(fixedHeadline, 100);
+            window.addEventListener('scroll', handler);
+          }
+          preventFire = true;
       },
       disable() {
           window.removeEventListener('scroll', handler);
@@ -157,7 +161,8 @@ const stickyfier = (HeadlineContainers, listContainers) => {
           //restoring the listContainers' padding
           listContainers.forEach(listEntry => {
               listEntry.style.paddingTop = 0;
-          })
+          });
+          preventFire = false;
       }
   }
 
