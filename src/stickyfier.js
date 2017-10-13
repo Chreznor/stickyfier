@@ -1,12 +1,12 @@
-const stickyfier = (HeadlineContainers, listContainers) => {
+const stickyfier = (headlineContainers, listContainers) => {
   //The headline container's parent element is also needed to correctly identify the distances between the texts
 
   //the private function that stickyfies the headlines
   const fixedHeadline = () => {
 
       //a for loop is used to keep track of every element in the DOM collection
-      for (var i = 0; i < HeadlineContainers.length; i++) {
-          const headlineContainer = HeadlineContainers[i];
+      for (var i = 0; i < headlineContainers.length; i++) {
+          const headlineContainer = headlineContainers[i];
           const headlineContainerTop = headlineContainer.getBoundingClientRect().top + window.scrollY;
           const listEntry = listContainers[i];
 
@@ -48,16 +48,15 @@ const stickyfier = (HeadlineContainers, listContainers) => {
       },
       disable() {
           window.removeEventListener('scroll', handler);
+          preventFire = false;
           //once the event lisntener is removed, the attached classes have to go too
-          HeadlineContainers.forEach(element => {
-              element.classList.remove('fixed-nav');
-              element.classList.remove('bottom');
+          headlineContainers.forEach(element => {
+            element.classList.remove('fixed-nav');
           });
           //restoring the listContainers' padding
           listContainers.forEach(listEntry => {
               listEntry.style.paddingTop = 0;
           });
-          preventFire = false;
       }
   }
 
